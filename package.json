@@ -1,0 +1,69 @@
+{
+  "name": "MIDI-Firmware-Uploader",
+  "productName": "MIDIFirmwareUploader",
+  "description": "Send Firmware Updates via MIDI",
+  "version": "0.1.0",
+  "private": true,
+  "author": "Lennart Schierling <Lennart@bastl-instruments.com>",
+  "copyright": "© 2017, Bastl Instruments",
+  "homepage": "http://bastl-instruments.com",
+  "license": "MIT",
+  "main": "app/background.js",
+  "build": {
+    "appId": "com.bastl-instruments.MIDIFirmwareUploader",
+    "files": [
+      "app/**/*",
+      "node_modules/**/*",
+      "package.json"
+    ],
+    "linux": {
+      "executableName": "MIDI-Firmware-Uploader",
+      "category": "AudioVideo",
+      "target": [
+        "AppImage"
+      ]
+    },
+    "mac": {
+      "category": "public.app-category.music",
+      "target": [
+        "dmg"
+      ]
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ]
+    },
+    "publish": null
+  },
+  "scripts": {
+    "postinstall": "electron-builder install-app-deps",
+    "build": "gulp build",
+    "prerelease": "gulp build --env=production",
+    "release": "build",
+    "start": "gulp start"
+  },
+  "dependencies": {
+    "fs-jetpack": "^1.0.0",
+    "jquery": "^3.2.1",
+    "load-json-file": "^3.0.0",
+    "midi": "^0.9.5"
+  },
+  "devDependencies": {
+    "chai": "^4.1.0",
+    "electron": "^1.6.11",
+    "electron-builder": "^19.16.0",
+    "gulp": "^3.9.1",
+    "gulp-batch": "^1.0.5",
+    "gulp-debug": "^3.1.0",
+    "gulp-less": "^3.3.2",
+    "gulp-plumber": "^1.1.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-util": "^3.0.8",
+    "gulp-watch": "^4.3.11",
+    "rollup": "^0.45.2",
+    "source-map-support": "^0.4.15",
+    "spectron": "^3.7.2"
+  }
+}

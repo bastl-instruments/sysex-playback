@@ -1,0 +1,59 @@
+@import url('fira-sans.css');
+
+body {
+	background-color: #ffff79;
+	font-size: 15px;
+	font-family: "Fira Sans"
+}
+::selection {
+  background: white;
+}
+
+#main-header {
+	font-size: 35px;
+	font-weight:800;
+	display: inline-block;
+	border-bottom: 7px solid black;
+	margin-bottom: 20px;
+}
+section {
+	display:block;
+	height:100%;
+	clear:both;
+	margin-bottom: 30px;
+}
+section>header {
+	font-size: 23px;
+	font-weight: 700;
+	text-transform: uppercase;
+	margin-bottom: 12px;
+	display: inline-block;
+	border-bottom: 4px solid black;
+}
+.result {
+	display: inline-block;
+	font-weight:600;
+}
+.result.error {
+	color: red;
+}
+label {
+	margin-right: 5px;
+}
+button, select, input {
+	border: 2px solid black;
+	background-color: #ffffb3;
+	padding: 5px;
+	outline: none;
+	margin: 2px;
+	font-weight: 600;
+}
+input[type=checkbox] {
+  height: 20px;
+	width: 20px;
+	-webkit-appearance:none;
+	cursor:pointer;
+}
+input[type="checkbox"]:checked {
+ background-color: black;
+}

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>MIDI Firmware Uploader</title>
+
+    <link rel="stylesheet" href="stylesheets/main.css">
+
+</head>
+<body>
+
+<div id="main-header">MIDI Firmware Uploader</div>
+<div id="content">
+
+<section id="load">
+  <button id="loadSettings">Load MIDI File</button> <div class="result"></div>
+</section>
+
+
+<section id="send">
+	<header>Send to Device</header>
+  <table>
+  	<tr id="portselect">
+      <td>
+  		    <label>Select Port</label>
+        </td>
+        <td>
+  	      <select>
+  	      </select>
+      </td>
+    </tr>
+  </table>
+</section>
+
+<span id="write">
+<button>Send to Device</button>
+<div class="result"></div>
+</span>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
