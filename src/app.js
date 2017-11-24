@@ -10,11 +10,22 @@ $(function(){
 	});
 	ipcRenderer.send('request_midi_port_options','');
 
+	setInterval(updateProgressBar, 200);
+
 	$("#midifile").on("change", openMIDIFile);
+	$("#send button").on("click", sendStart);
+	$("#logging .toggle").on("click", toggleLog);
+
+	toggleLog();
 
 });
 
 var midifile = 0;
+var timer = 0;
+var currentMessageID = 0;
+var startTime = 0;
+var endTime = 0;
+var duration = 0;
 
 function openMIDIFile(event) {
 	  var files = event.target.files
@@ -43,12 +54,10 @@ function openMIDIFile(event) {
 }
 
 function parseMIDIfile() {
-		var events = midifile.getEvents();
-		$.each(events, function(index, value) {
-			//console.log(value);
-		});
-		showStats(events[events.length-1].playTime);
-	}
+	var events = midifile.getEvents();
+	duration = events[events.length-1].playTime;
+	showStats(duration);
+}
 
 function clearStats() {
 	$("#stats").text("");
@@ -77,18 +86,42 @@ function setMIDIPortOptions(portOptions) {
 	}
 }
 
-function sendMIDI() {
+function sendStart() {
+	currentMessageID = 0;
+	timer = 0;
+	startTime = new Date().getTime();
+	endTime = startTime + duration;
+	setProgress(0);
+	sendProceed();
+}
+function sendStop() {
+	timer = 0;
+}
+
+function sendProceed() {
+	var events = midifile.getEvents();
+	var thisEvent = events[currentMessageID];
+	showMessageDebug(thisEvent);
+	if (currentMessageID < events.length-1) {
+		currentMessageID = currentMessageID + 1;
+		var nextEvent = events[currentMessageID];
+		var timeToNext = nextEvent.playTime - thisEvent.playTime;
+		timer = setTimeout(sendProceed, timeToNext);
+	} else {
+		sendStop();
+	}
+}
+
+
+
+function sendMIDI(data) {
+	console.log("send");
 	// send port number and midi data to main process
-	ipcRenderer.send('send_midi_data', {
+	ipcRenderer.sendSync('send_midi_data_sync', {
 			port: $("#portselect select")[0].value,
-			data: sysExStream
+			data: data
 	});
-	// handle success/failure
-	ipcRenderer.once('send_midi_data', function(event, message) {
-		if (message.result) {
-		} else {
-		}
-	});
+
 }
 
 
@@ -107,4 +140,92 @@ function updateResultField(element, message, isError) {
 		element.removeClass("error");
 		element.fadeOut(3000, 'swing');
 	}
+}
+
+function updateProgressBar() {
+	if (timer) {
+		var now = new Date().getTime();
+		var progress = Math.round((now - startTime)/(duration) * 1000);
+		setProgress(progress);
+	}
+}
+
+function setProgress(val) {
+	var element = $("progress");
+	if (val == false) {
+		element.removeAttr("value");
+	} else {
+		element.attr("value", val);
+	}
+}
+
+function toggleLog() {
+	var button = $("#logging span");
+	var element = $("#logging textarea");
+	if (element.is(":visible")) {
+		element.fadeOut(400, 'swing', function() {
+			button.text("▼ Show Log")
+		});
+	} else {
+		element.fadeIn(400,'swing', function() {
+			button.text("▲ Hide Log")
+		});
+	}
+}
+
+function showMessageDebug(event) {
+	switch (event.type) {
+		case 240:
+			printLog(parseSysEx(event.data));
+			break;
+		case 255:
+			// meta event
+			break;
+		default:
+		  printLog("Unexpected event type " + event.type);
+	}
+}
+
+function printLog(text) {
+	var logWindow = $("#logging textarea");
+	logWindow.append(text + "&#10;");
+	logWindow.scrollTop(logWindow.prop('scrollHeight'));
+}
+
+const Code_Flash = 2;
+const Code_Start = 4;
+const Code_Forward_Flash = 12;
+const Code_Forward_Erase = 15;
+
+function parseSysEx(data) {
+	if (data[0] == 123) {
+
+		var deviceID = data[1];
+		var command = data[2];
+		var payload = HalfByteToByte(data.slice(3,data.length))
+
+		// Thyme
+		if (deviceID == 10)  {
+			switch (command) {
+				case Code_Flash:
+				  var pageID = payload[0]*256 + payload[1];
+					return "[Thyme] Flash AVR Page " + pageID;
+				case Code_Start:
+					return "[Thyme] Reboot";
+				case Code_Forward_Flash:
+					var pageID = payload[1] * 512 + payload[2]*2 + payload[3]/128;
+					return "[Thyme] Flash ARM Page " + pageID;
+				case Code_Forward_Erase:
+					return "[Thyme] Erase ARM (This will take some time)";
+			}
+		}
+	}
+}
+
+function HalfByteToByte(input) {
+	var result = [];
+	for (var i=0; i<input.length; i=i+2) {
+		result.push(input[i]*16 + input[i+1])
+	}
+	return result;
 }

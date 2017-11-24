@@ -21,24 +21,19 @@
 </section>
 
 <section id="send">
-	<header>Send to Device</header>
-  <table>
-  	<tr id="portselect">
-      <td>
-  		    <label>Select Port</label>
-        </td>
-        <td>
-  	      <select>
-  	      </select>
-      </td>
-    </tr>
-  </table>
-  <button>Send to Device</button>
+	<div id="portselect">
+    <select>
+    </select>
+  </div>
+
+  <button id="flash">Flash</button>
   <div class="result"></div>
 </section>
 
-<section id="progress">
-  <progress max="100" value="80"></progress>
+<section id="logging">
+  <progress max="1000"></progress>
+  <span class="toggle"></span>
+  <textarea readonly></textarea>
 </section>
 
 </div>

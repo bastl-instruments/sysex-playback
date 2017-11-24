@@ -19,6 +19,7 @@ body {
 section {
 	display:block;
 	height:100%;
+	width: 100%;
 	clear:both;
 	margin-bottom: 30px;
 }
@@ -40,7 +41,7 @@ section>header {
 label {
 	margin-right: 5px;
 }
-button, select, input {
+button, select, input, progress, textarea {
 	border: 2px solid black;
 	background-color: #ffffb3;
 	padding: 5px;
@@ -66,4 +67,42 @@ input[type="file"]::-webkit-file-upload-button {
 	outline: none;
 	margin-right: 6px;
 	font-weight: 600;
+}
+progress {
+	width: 100%;
+	height: 30px;
+	padding: 1px;
+}
+progress:not([value])::-webkit-progress-bar {
+	background-color: #ffff79;
+}
+progress::-webkit-progress-bar {
+  background-color: #ffffb3;
+}
+progress::-webkit-progress-value {
+	background-color: black;
+}
+textarea {
+	resize: none;
+}
+button {
+	cursor: pointer;
+}
+
+
+
+#logging textarea {
+	width: 100%;
+	box-sizing: border-box;
+	height: 180px;
+}
+#logging span {
+	cursor: pointer;
+}
+#flash {
+	font-weight: 900;
+	border-width: 5px;
+	font-size:20px;
+	padding: 10px;
+	margin-top: 10px;
 }

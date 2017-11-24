@@ -35,19 +35,26 @@ function sendMIDIData(data) {
 
 app.on('ready', function() {
     mainWindow = new BrowserWindow({
-        height: 600,
-        width: 890,
+        height: 580,
+        width: 400,
         icon: __dirname + '/icon.png'
     });
 
     mainWindow.loadURL('file://' + __dirname + '/app.html');
-    mainWindow.openDevTools();
+    //mainWindow.openDevTools();
 
     ipcMain.on('send_midi_data', function (event,message) {
         if (sendMIDIData(message)) {
           event.sender.send('send_midi_data',{result: true});
         } else {
           event.sender.send('send_midi_data',{result: false, message: "Could not send"});
+        }
+    });
+    ipcMain.on('send_midi_data_sync', function (event,message) {
+        if (sendMIDIData(message)) {
+          event.returnValue = true;
+        } else {
+          event.returnValue = false;
         }
     });
     ipcMain.on('request_midi_port_options', function (event,message) {
