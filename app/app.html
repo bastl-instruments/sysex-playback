@@ -15,10 +15,10 @@
 <div id="main-header">MIDI Firmware Uploader</div>
 <div id="content">
 
-<section id="load">
-  <button id="loadSettings">Load MIDI File</button> <div class="result"></div>
+<section id="openFile">
+  <input type="file" name="midifile" id="midifile"/> <div class="result"></div>
+  <div id="stats"></div>
 </section>
-
 
 <section id="send">
 	<header>Send to Device</header>
@@ -33,12 +33,14 @@
       </td>
     </tr>
   </table>
+  <button>Send to Device</button>
+  <div class="result"></div>
 </section>
 
-<span id="write">
-<button>Send to Device</button>
-<div class="result"></div>
-</span>
+<section id="progress">
+  <progress max="100" value="80"></progress>
+</section>
+
 </div>
 
 <script src="app.js"></script>
