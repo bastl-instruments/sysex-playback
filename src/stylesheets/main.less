@@ -70,6 +70,9 @@ progress {
 	height: 30px;
 	padding: 1px;
 }
+progress:not([value]) {
+	opacity: 0.5;
+}
 progress:not([value])::-webkit-progress-bar {
 	background-color: #ffff79;
 }
@@ -102,4 +105,9 @@ button {
 	font-size:20px;
 	padding: 10px;
 	margin-top: 10px;
+	width: 83px;
+}
+#flash.disabled {
+	opacity: 0.5;
+	cursor: default;
 }
