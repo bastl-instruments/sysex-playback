@@ -13,7 +13,7 @@ $(function(){
 	setInterval(updateProgressBar, 200);
 
 	$("#midifile").on("change", openMIDIFile);
-	$("#send button").on("click", sendStart);
+	$("#flash").on("click", sendStart);
 	$("#logging .toggle").on("click", toggleLog);
 
 	toggleLog();
@@ -39,14 +39,13 @@ function openMIDIFile(event) {
 			reader.onload = function(result) {
 				try {
 					midifile = new MIDIFile(reader.result);
-					showFileOperationStatus("File Ok", false);
+					showFileOperationStatus("File loaded", false);
 					parseMIDIfile();
 				}
 				catch(err) {
 					showFileOperationStatus("Not a valid MIDI File", true);
 					console.log(err);
 					event.target.value = "";
-					clearStats();
 				}
 			};
 			reader.readAsArrayBuffer(thisFile);
@@ -59,10 +58,6 @@ function parseMIDIfile() {
 	showStats(duration);
 }
 
-function clearStats() {
-	$("#stats").text("");
-}
-
 function showStats(playTime) {
 	var minutes = Math.floor(playTime / 1000 / 60);
 	var seconds = Math.ceil((playTime / 1000) - minutes*60);
@@ -72,11 +67,11 @@ function showStats(playTime) {
 		if (minutes > 1) minText = minText+'s';
 	}
 	var secText = seconds + " seconds";
-	$("#stats").text("Total duration: " + minText +' '+ secText);
+	printLog("Total duration: " + minText +' '+ secText);
 }
 
 function setMIDIPortOptions(portOptions) {
-	var portSelect = $("#portselect select");
+	var portSelect = $("#portselect");
 	portSelect.html("");
 	for (var i=0; i<portOptions.length; i++){
 		var el = $("<option></<option>");
@@ -118,7 +113,7 @@ function sendMIDI(data) {
 	console.log("send");
 	// send port number and midi data to main process
 	ipcRenderer.sendSync('send_midi_data_sync', {
-			port: $("#portselect select")[0].value,
+			port: $("#portselect")[0].value,
 			data: data
 	});
 
@@ -126,8 +121,7 @@ function sendMIDI(data) {
 
 
 function showFileOperationStatus(status, error) {
-	var element = $("#openFile .result");
-	updateResultField(element, status, error);
+	printLog(status);
 }
 
 function updateResultField(element, message, isError) {

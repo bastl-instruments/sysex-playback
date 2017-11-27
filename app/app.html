@@ -15,25 +15,21 @@
 <div id="main-header">MIDI Firmware Uploader</div>
 <div id="content">
 
-<section id="openFile">
+<section>
+  <header><span>Firmware File</span></header>
   <input type="file" name="midifile" id="midifile"/> <div class="result"></div>
-  <div id="stats"></div>
 </section>
-
-<section id="send">
-	<div id="portselect">
-    <select>
-    </select>
+<section>
+  <header><span>MIDI Port</span></header>
+  <select id="portselect">
+  </select>
+</section>
+<section>
+  <button id="flash">Flash</button>   <progress max="1000"></progress>
+  <div id="logging">
+    <span class="toggle"></span>
+    <textarea readonly></textarea>
   </div>
-
-  <button id="flash">Flash</button>
-  <div class="result"></div>
-</section>
-
-<section id="logging">
-  <progress max="1000"></progress>
-  <span class="toggle"></span>
-  <textarea readonly></textarea>
 </section>
 
 </div>
