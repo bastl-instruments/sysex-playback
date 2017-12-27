@@ -1,31 +1,25 @@
 'use strict';
 
 var electron = require('electron');
+import MIDIOutput from "./midi/MIDIDevice"
 
 var app = electron.app;
 var BrowserWindow = electron.BrowserWindow;
-var midi = require('midi');
 var ipcMain = electron.ipcMain;
 
 var mainWindow = null;
-var midiOut = new midi.output();
+
+const midiPort = new MIDIOutput();
 
 
-function sendMIDIPortOptions() {
-  var midiPortList = [];
-  for (var i= 0; i<midiOut.getPortCount(); i++){
-    midiPortList.push(midiOut.getPortName(i));
-  }
-	mainWindow.webContents.send('midi_port_options', midiPortList);
-}
 
 function sendMIDIData(data) {
   try {
-    midiOut.openPort(parseInt(data.port));
+    midiPort.open(parseInt(data.port));
     data.data.forEach(function(item, index) {
-      midiOut.sendMessage(item);
+      midiPort.sendMessage(item);
     });
-    midiOut.closePort();
+    midiPort.close();
     return true;
   }
   catch(err) {
@@ -36,29 +30,31 @@ function sendMIDIData(data) {
 app.on('ready', function() {
     mainWindow = new BrowserWindow({
         height: 580,
-        width: 400,
+        width: 800,
         icon: __dirname + '/icon.png'
     });
 
     mainWindow.loadURL('file://' + __dirname + '/app.html');
     mainWindow.openDevTools();
 
-    ipcMain.on('send_midi_data', function (event,message) {
-        if (sendMIDIData(message)) {
-          event.sender.send('send_midi_data',{result: true});
-        } else {
-          event.sender.send('send_midi_data',{result: false, message: "Could not send"});
-        }
+
+    ipcMain.on('send_midi_message', function (event, message) {
+        midiPort.sendMessage(message);
     });
-    ipcMain.on('send_midi_data_sync', function (event,message) {
-        if (sendMIDIData(message)) {
-          event.returnValue = true;
-        } else {
-          event.returnValue = false;
-        }
+
+    ipcMain.on('open_midi_port', function (event, portID) {
+      midiPort.close();
+      midiPort.open(portID);
+      event.returnValue = true;
     });
+
+    ipcMain.on('close_midi_port', function (event, dummy) {
+      midiPort.close();
+      event.returnValue = true;
+    });
+
     ipcMain.on('request_midi_port_options', function (event,message) {
-        sendMIDIPortOptions();
+        event.returnValue = midiPort.getPortList();
     });
 
 });

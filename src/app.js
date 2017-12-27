@@ -5,10 +5,10 @@ const MIDIFile = require('midifile');
 
 
 $(function(){
-	ipcRenderer.on('midi_port_options', function (event,message) {
-		setMIDIPortOptions(message);
-	});
-	ipcRenderer.send('request_midi_port_options','');
+
+	setMIDIPortOptions(
+		ipcRenderer.sendSync('request_midi_port_options','')
+	);
 
 	$("#logging .toggle").on("click", toggleLog);
 
@@ -94,10 +94,13 @@ function setUIFromState() {
 			break;
 		case State.ABORT:
 			fileSelector.on("change", doLoad);
+			flashButton.text("Flash");
 			flashButton.on("click", doStart);
+			break;
 		case State.DONE:
 			fileSelector.on("change", doLoad);
 			flashButton.text("Flash");
+			flashButton.on("click", doStart);
 			printLog("Flashing completed!");
 			setProgress(1000);
 			break;
@@ -159,6 +162,7 @@ var endTime;
 
 function playerStart(midiFile) {
 	console.log("Player: Start");
+	openMIDIPort();
 	events = midiFile.getEvents();
 	currentIndex = 0;
 	elapsedTime = 0;
@@ -168,30 +172,44 @@ function playerStart(midiFile) {
 function playerStop() {
 	console.log("Player: Stop");
 	clearTimeout(timer);
+	closeMIDIPort();
 }
 function playerCheck() {
 	elapsedTime = elapsedTime + timeInterval;
 	setProgress(Math.round(elapsedTime/endTime*1000));
 	if (elapsedTime >= events[currentIndex].playTime) {
-		showMessageDebug(events[currentIndex]);
+
+		playerHandleEvent(events[currentIndex]);
+
 		currentIndex = currentIndex + 1;
 		if (currentIndex >= events.length-1) {
 			changeState(State.DONE);
 		}
 	}
 }
+function playerHandleEvent(event) {
+	if (event.type == 240) {
+		printLog(SysExToString(event.data));
+
+		var data = [event.type, ]
+		if (event.data) data = data.concat(event.data);
+		sendMIDIMessage(data);
+	}
+}
 
 
 /********** MIDI *****************/
 
-function sendMIDI(data) {
-	console.log("send");
-	// send port number and midi data to main process
-	ipcRenderer.sendSync('send_midi_data_sync', {
-			port: $("#portselect")[0].value,
-			data: data
-	});
+function openMIDIPort() {
+	var result = ipcRenderer.sendSync('open_midi_port', $("#portselect")[0].value);
+}
 
+function closeMIDIPort() {
+	ipcRenderer.sendSync('close_midi_port', 0);
+}
+
+function sendMIDIMessage(message) {
+	ipcRenderer.send('send_midi_message', message);
 }
 
 /************ UI **************/
@@ -220,7 +238,7 @@ function printStats(events) {
 	}
 	var secText = seconds + " second";
 	if (seconds != 1) secText = secText+'s';
-	printLog("Total duration:" + minText +' '+ secText);
+	printLog("Total duration: " + minText +' '+ secText);
 }
 
 function showFileOperationStatus(status, error) {
