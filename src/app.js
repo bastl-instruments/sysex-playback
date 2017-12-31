@@ -128,12 +128,12 @@ function openMIDIFile(event) {
 					Player.loadFileFromBuffer(reader.result);
 					console.log("File read");
 					showFileOperationStatus("File loaded", false);
-					//printStats(midifile.getEvents());
+					printDuration(Player.getDuration());
 					changeState(State.READY);
 				}
 				catch(err) {
 					showFileOperationStatus("Not a valid MIDI File", true);
-					//console.log(err);
+					console.log(err);
 					console.log("Invalid file");
 					changeState(State.INIT);
 				}
@@ -206,18 +206,18 @@ function showMessageDebug(event) {
 	}
 }
 
-function printStats(events) {
-	var duration = events[events.length-1].playTime;
+function printDuration(duration) {
 	var minutes = Math.floor(duration / 1000 / 60);
 	var seconds = Math.ceil((duration / 1000) - minutes*60);
 	var minText = '';
 	if (minutes > 0) {
-		minText = minutes + " minute"
-		if (minutes != 1) minText = minText+'s';
+		if (minutes != 1) minText = minutes + ' minutes ';
+		else minText = '1 minute ';
 	}
-	var secText = seconds + " second";
-	if (seconds != 1) secText = secText+'s';
-	printLog("Total duration: " + minText +' '+ secText);
+	var secText = seconds + "second";
+	if (seconds != 1) secText = seconds + ' seconds';
+	else secText = '1 second';
+	printLog("Total duration: " + minText + secText);
 }
 
 function showFileOperationStatus(status, error) {

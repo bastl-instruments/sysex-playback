@@ -13,6 +13,7 @@ export default class MIDIPlayer   {
 
   loadFileFromBuffer(buffer) {
     this.file = new MIDIFile(buffer);
+    this.events = this.file.getEvents();
   }
 
   on(eventName, func) {
@@ -33,7 +34,6 @@ export default class MIDIPlayer   {
 
       this.playbackPosition = 0;
       this.elapsedTime = 0;
-      this.events = this.file.getEvents();
       this.endTime = this.events[this.events.length-1].playTime;
 
       this.timer = setInterval(this.loop.bind(this), this.intervalTime);
@@ -64,6 +64,10 @@ export default class MIDIPlayer   {
 
   getProgress() {
     return this.elapsedTime/this.endTime;
+  }
+
+  getDuration() {
+    return this.events[this.events.length-1].playTime;
   }
 
   halt() {
