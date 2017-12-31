@@ -34,6 +34,11 @@ gulp.task('icon', () => {
   .pipe(gulp.dest(destDir.path('')));
 });
 
+gulp.task('images', () => {
+  return gulp.src(srcDir.path('stylesheets/*.png'))
+  .pipe(gulp.dest(destDir.path('stylesheets')));
+});
+
 gulp.task('watch', () => {
   const beepOnError = (done) => {
     return (err) => {
@@ -52,4 +57,4 @@ gulp.task('watch', () => {
   }));
 });
 
-gulp.task('build', ['bundle', 'less', 'icon']);
+gulp.task('build', ['bundle', 'less', 'icon', 'images']);
