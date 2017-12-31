@@ -73,6 +73,7 @@ function setUIFromState() {
 			fileSelector.on("change", doLoad);
 			flashButton.addClass("disabled");
 			fileSelector.val("");
+      setProgress(0);
 			break;
 		case State.LOAD:
 			setProgress(0);
