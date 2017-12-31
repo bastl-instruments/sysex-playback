@@ -79,6 +79,7 @@ function setUIFromState() {
 			break;
 		case State.READY:
 			flashButton.on("click", doStart);
+			fileSelector.on("change", doLoad);
 			flashButton.text("Flash");
 			flashButton.removeClass("disabled");
 			break;
