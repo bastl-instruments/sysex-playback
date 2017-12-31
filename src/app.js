@@ -1,7 +1,21 @@
 let $ = require('jquery');
 var ipcRenderer = require('electron').ipcRenderer;
 const {dialog} = require('electron').remote;
-const MIDIFile = require('midifile');
+import MIDIPlayer from "./midi/midi-player"
+
+var State = {
+  INIT: 0,
+	LOAD: 1,
+  READY: 2,
+  FLASHING: 3,
+	ABORT: 4,
+	DONE: 5
+};
+var StateNames = ["INIT", "LOAD", "READY", "FLASHING", "ABORT", "DONE"];
+var currentState = 0;
+
+var reader;
+var Player = new MIDIPlayer();
 
 
 $(function(){
@@ -15,30 +29,11 @@ $(function(){
 	toggleLog();
 
 	changeState(State.INIT);
+	Player.on("loop", playerCheck);
+	Player.on("endOfFile", endOfFile);
+	Player.on("midi", sendEvent);
 
 });
-
-var State = {
-  INIT: 0,
-	LOAD: 1,
-  READY: 2,
-  FLASHING: 3,
-	ABORT: 4,
-	DONE: 5
-};
-var StateNames = ["INIT", "LOAD", "READY", "FLASHING", "ABORT", "DONE"];
-
-var reader;
-
-var currentState = 0;
-
-var midifile = 0;
-
-
-
-
-
-
 
 
 function changeState(state) {
@@ -46,7 +41,6 @@ function changeState(state) {
 	console.log("Change State: ", StateNames[currentState]);
 	switch (currentState) {
 		case State.INIT:
-			midifile = 0;
 			break;
 		case State.LOAD:
 			openMIDIFile();
@@ -54,7 +48,7 @@ function changeState(state) {
 		case State.READY:
 			break;
 		case State.FLASHING:
-			playerStart(midifile);
+			playerStart();
 			break;
 		case State.ABORT:
 			playerStop();
@@ -118,7 +112,6 @@ function doLoad() {
 }
 
 
-
 function openMIDIFile(event) {
 	  var files = $("#midifile").prop("files");
 		if (files) {
@@ -132,10 +125,10 @@ function openMIDIFile(event) {
 			}
 			reader.onload = function(result) {
 				try {
-					midifile = new MIDIFile(reader.result);
+					Player.loadFileFromBuffer(reader.result);
 					console.log("File read");
 					showFileOperationStatus("File loaded", false);
-					printStats(midifile.getEvents());
+					//printStats(midifile.getEvents());
 					changeState(State.READY);
 				}
 				catch(err) {
@@ -153,41 +146,27 @@ function openMIDIFile(event) {
 /************ PLAYBACK ***********/
 
 
-var currentIndex;
-var events;
-var timer;
-const timeInterval = 10;
-var elapsedTime;
-var endTime;
-
 function playerStart(midiFile) {
 	console.log("Player: Start");
 	openMIDIPort();
-	events = midiFile.getEvents();
-	currentIndex = 0;
-	elapsedTime = 0;
-	timer = setInterval(playerCheck, timeInterval);
-	endTime = events[events.length-1].playTime;
+	Player.start();
 }
+
 function playerStop() {
 	console.log("Player: Stop");
-	clearTimeout(timer);
+	Player.halt();
 	closeMIDIPort();
 }
+
 function playerCheck() {
-	elapsedTime = elapsedTime + timeInterval;
-	setProgress(Math.round(elapsedTime/endTime*1000));
-	if (elapsedTime >= events[currentIndex].playTime) {
-
-		playerHandleEvent(events[currentIndex]);
-
-		currentIndex = currentIndex + 1;
-		if (currentIndex >= events.length-1) {
-			changeState(State.DONE);
-		}
-	}
+	setProgress(Player.getProgress() * 1000);
 }
-function playerHandleEvent(event) {
+
+function endOfFile() {
+	changeState(State.DONE);
+}
+
+function sendEvent(event) {
 	if (event.type == 240) {
 		printLog(SysExToString(event.data));
 
