@@ -117,29 +117,33 @@ function openMIDIFile(event) {
 	  var files = $("#midifile").prop("files");
 		if (files) {
 			var thisFile = files[0];
-			console.log("loading..");
-			reader = new FileReader();
-			reader.onerror = function(error) {
-				showFileOperationStatus("Could not open File");
-				//console.log(err);
-				changeState(State.INIT);
-			}
-			reader.onload = function(result) {
-				try {
-					Player.loadFileFromBuffer(reader.result);
-					console.log("File read");
-					showFileOperationStatus("File loaded", false);
-					printDuration(Player.getDuration());
-					changeState(State.READY);
-				}
-				catch(err) {
-					showFileOperationStatus("Not a valid MIDI File", true);
-					console.log(err);
-					console.log("Invalid file");
+			if (thisFile) {
+				console.log("loading", thisFile);
+				reader = new FileReader();
+				reader.onerror = function(error) {
+					showFileOperationStatus("Could not open File");
+					//console.log(err);
 					changeState(State.INIT);
 				}
-			};
-			reader.readAsArrayBuffer(thisFile);
+				reader.onload = function(result) {
+					try {
+						Player.loadFileFromBuffer(reader.result);
+						console.log("File read");
+						showFileOperationStatus("File loaded", false);
+						printDuration(Player.getDuration());
+						changeState(State.READY);
+					}
+					catch(err) {
+						showFileOperationStatus("Not a valid MIDI File", true);
+						console.log(err);
+						console.log("Invalid file");
+						changeState(State.INIT);
+					}
+				};
+				reader.readAsArrayBuffer(thisFile);
+			} else {
+				changeState(State.INIT);
+			}
 		}
 }
 
@@ -147,7 +151,7 @@ function openMIDIFile(event) {
 /************ PLAYBACK ***********/
 
 
-function playerStart(midiFile) {
+function playerStart() {
 	console.log("Player: Start");
 	openMIDIPort();
 	Player.start();
