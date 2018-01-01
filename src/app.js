@@ -195,7 +195,7 @@ function closeMIDIPort() {
 }
 
 function sendMIDIMessage(message) {
-	ipcRenderer.send('send_midi_message', message);
+	ipcRenderer.sendSync('send_midi_message', message);
 }
 
 /************ UI **************/

@@ -8,6 +8,7 @@ export default class MIDIPlayer   {
     this.eventListeners = {};
     this.playbackPosition = 0;
     this.elapsedTime = 0;
+    this.nextEventTime = 0;
     this.endTime = 0;
   }
 
@@ -34,6 +35,7 @@ export default class MIDIPlayer   {
 
       this.playbackPosition = 0;
       this.elapsedTime = 0;
+      this.nextEventTime = this.events[0].playTime;
       this.endTime = this.events[this.events.length-1].playTime;
 
       this.timer = setInterval(this.loop.bind(this), this.intervalTime);
@@ -46,24 +48,28 @@ export default class MIDIPlayer   {
     this.elapsedTime = this.elapsedTime + this.intervalTime;
     this.triggerEvent('loop');
 
-
     var thisEvent = this.events[this.playbackPosition];
 
-    if (this.elapsedTime >= thisEvent.playTime) {
+    if (this.elapsedTime > this.nextEventTime) {
 
       this.triggerEvent('midi', thisEvent);
 
       this.playbackPosition = this.playbackPosition + 1;
+
       if (this.playbackPosition >= this.events.length-1) {
         this.triggerEvent('endOfFile');
         this.halt();
+      } else {
+        var nextEvent = this.events[this.playbackPosition];
+        this.elapsedTime = thisEvent.playTime;
+        this.nextEventTime = nextEvent.playTime;
       }
     }
     return this;
   }
 
   getProgress() {
-    return this.elapsedTime/this.endTime;
+      return this.elapsedTime/this.endTime;
   }
 
   getDuration() {

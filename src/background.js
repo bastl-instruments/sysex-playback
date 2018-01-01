@@ -13,20 +13,6 @@ const midiPort = new MIDIOutput();
 
 
 
-function sendMIDIData(data) {
-  try {
-    midiPort.open(parseInt(data.port));
-    data.data.forEach(function(item, index) {
-      midiPort.sendMessage(item);
-    });
-    midiPort.close();
-    return true;
-  }
-  catch(err) {
-    return false;
-  }
-}
-
 app.on('ready', function() {
     mainWindow = new BrowserWindow({
         fullscreenable: false,
@@ -40,7 +26,8 @@ app.on('ready', function() {
 
 
     ipcMain.on('send_midi_message', function (event, message) {
-        midiPort.sendMessage(message);
+      midiPort.sendMessage(message);
+      event.returnValue = true;
     });
 
     ipcMain.on('open_midi_port', function (event, portID) {
