@@ -1,6 +1,7 @@
 let $ = require('jquery');
 var ipcRenderer = require('electron').ipcRenderer;
 const {dialog} = require('electron').remote;
+let win = require('electron').remote.getCurrentWindow();
 import MIDIPlayer from "./midi/midi-player"
 
 var State = {
@@ -244,11 +245,13 @@ function toggleLog() {
 	var element = $("#logging textarea");
 	if (element.is(":visible")) {
 		element.fadeOut(400, 'swing', function() {
-			button.text("▼ Show Log")
+			button.text("▼ Show Log");
+      win.setSize(400,460,400);
 		});
 	} else {
+    win.setSize(400,460+180,400);
 		element.fadeIn(400,'swing', function() {
-			button.text("▲ Hide Log")
+			button.text("▲ Hide Log");
 		});
 	}
 }
@@ -293,7 +296,7 @@ function SysExToString(data) {
 				  var pageID = payload[0]*256 + payload[1];
 					return "[Thyme] Flash AVR Page " + pageID;
 				case Code_Start:
-					return "[Thyme] Reboot";
+					return "[Thyme] Indicate Finished";
 				case Code_Forward_Flash:
 					var pageID = payload[1] * 512 + payload[2]*2 + payload[3]/128;
 					return "[Thyme] Flash ARM Page " + pageID;

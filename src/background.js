@@ -29,13 +29,14 @@ function sendMIDIData(data) {
 
 app.on('ready', function() {
     mainWindow = new BrowserWindow({
-        height: 580,
-        width: 800,
+        fullscreenable: false,
+        height: 440,
+        width: 500,
         icon: __dirname + '/icon.png'
     });
 
     mainWindow.loadURL('file://' + __dirname + '/app.html');
-    mainWindow.openDevTools();
+    //mainWindow.openDevTools();
 
 
     ipcMain.on('send_midi_message', function (event, message) {
