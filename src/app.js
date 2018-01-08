@@ -27,12 +27,13 @@ $(function(){
 
 	$("#logging .toggle").on("click", toggleLog);
 
-	toggleLog();
-
 	changeState(State.INIT);
 	Player.on("loop", playerCheck);
 	Player.on("endOfFile", endOfFile);
 	Player.on("midi", sendEvent);
+
+  printLog("Before you start: connect your computer's MIDI output to the device's MIDI input and boot the device into bootloader mode.");
+  printLog("");
 
 });
 
@@ -131,7 +132,7 @@ function openMIDIFile(event) {
 					try {
 						Player.loadFileFromBuffer(reader.result);
 						console.log("File read");
-						showFileOperationStatus("File loaded", false);
+						showFileOperationStatus("MIDI File loaded", false);
 						printDuration(Player.getDuration());
 						changeState(State.READY);
 					}
@@ -296,7 +297,7 @@ function SysExToString(data) {
 				  var pageID = payload[0]*256 + payload[1];
 					return "[Thyme] Flash AVR Page " + pageID;
 				case Code_Start:
-					return "[Thyme] Indicate Finished";
+					return "[Thyme] Light up sound selection LEDs to indicate finished";
 				case Code_Forward_Flash:
 					var pageID = payload[1] * 512 + payload[2]*2 + payload[3]/128;
 					return "[Thyme] Flash ARM Page " + pageID;

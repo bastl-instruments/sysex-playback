@@ -16,8 +16,8 @@ const midiPort = new MIDIOutput();
 app.on('ready', function() {
     mainWindow = new BrowserWindow({
         fullscreenable: false,
-        height: 440,
-        width: 500,
+        height: 460+180,
+        width: 400,
         icon: __dirname + '/icon.png'
     });
 
@@ -48,5 +48,5 @@ app.on('ready', function() {
 });
 
 app.on('window-all-closed', function() {
-    app.quit(); 
+    app.quit();
 });
