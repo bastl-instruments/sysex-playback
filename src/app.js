@@ -83,7 +83,7 @@ function setUIFromState() {
 		case State.READY:
 			flashButton.on("click", doStart);
 			fileSelector.on("change", doLoad);
-			flashButton.text("Flash");
+			flashButton.text("Upload");
 			flashButton.removeClass("disabled");
 			break;
 		case State.FLASHING:
@@ -92,12 +92,12 @@ function setUIFromState() {
 			break;
 		case State.ABORT:
 			fileSelector.on("change", doLoad);
-			flashButton.text("Flash");
+			flashButton.text("Upload");
 			flashButton.on("click", doStart);
 			break;
 		case State.DONE:
 			fileSelector.on("change", doLoad);
-			flashButton.text("Flash");
+			flashButton.text("Upload");
 			flashButton.on("click", doStart);
 			printLog("Flashing completed!");
 			setProgress(1000);
