@@ -18,7 +18,10 @@ app.on('ready', function() {
         fullscreenable: false,
         height: 460+180,
         width: 400,
-        icon: __dirname + '/icon.png'
+        icon: __dirname + '/icon.png',
+        webPreferences: {
+          backgroundThrottling: false
+        }
     });
 
     mainWindow.loadURL('file://' + __dirname + '/app.html');
