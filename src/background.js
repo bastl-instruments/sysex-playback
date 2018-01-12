@@ -19,6 +19,7 @@ app.on('ready', function() {
         height: 460+180,
         width: 400,
         icon: __dirname + '/icon.png',
+        alwaysOnTop: true,
         webPreferences: {
           backgroundThrottling: false
         }
