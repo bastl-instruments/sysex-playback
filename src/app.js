@@ -297,7 +297,7 @@ function SysExToString(data) {
 				  var pageID = payload[0]*256 + payload[1];
 					return "[Thyme] Flash AVR Page " + pageID;
 				case Code_Start:
-					return "[Thyme] Light up sound selection LEDs to indicate finished";
+					return "[Thyme] Upload is finished. Restart the device if all big button LEDs light up. Otherwise check the manual.";
 				case Code_Forward_Flash:
 					var pageID = payload[1] * 512 + payload[2]*2 + payload[3]/128;
 					return "[Thyme] Flash ARM Page " + pageID;
