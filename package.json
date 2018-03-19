@@ -2,7 +2,7 @@
   "name": "MIDI-Firmware-Uploader",
   "productName": "MIDIFirmwareUploader",
   "description": "Send Firmware Updates via MIDI",
-  "version": "0.2.4",
+  "version": "1.0.0",
   "private": true,
   "author": "Lennart Schierling <Lennart@bastl-instruments.com>",
   "copyright": "© 2017, Bastl Instruments",
@@ -26,7 +26,7 @@
     "mac": {
       "category": "public.app-category.music",
       "target": [
-        "pkg"
+        "dmg"
       ]
     },
     "win": {

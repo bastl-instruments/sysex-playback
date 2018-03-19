@@ -26,6 +26,6 @@ So we developed this application which peforms this rather simple task on Linux,
 
 | Operating System | Details |
 | ----| --------|
-| Linux | AppImage compiled on Debian Stretch amd64 |
-| MacOS | DMG compiled on High Sierra 10.13.1 |
-| Windows | Portable and Installer compiled on Windows 7 32bit |
+| Linux | AppImage compiled on **Debian Stretch amd64** |
+| MacOS | DMG compiled on **High Sierra 10.13.1** |
+| Windows | Portable and Installer compiled on **Windows 7 32bit** |
